@@ -1,0 +1,60 @@
+<div id="locacao" class="container mt-4">
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <p><i class="fa-solid fa-cart-plus"></i> Nova Locação</p>
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <strong>Locação de Veículos</strong> 
+                    <form>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label for="dataInicial" class="form-label">Data de Início</label>
+                                <input type="date" class="form-control d-inline-flex p-2" id="dataInicial" name="dataInicial" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="dataFinal" class="form-label">Data de Fim</label>
+                                <input type="date" class="form-control d-inline-flex p-2" id="dataFinal" name="dataFinal" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="disabledSelect" class="form-label">Carro</label>
+                            <select id="disabledSelect" class="form-select">
+                                <option>Selecione um carro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="disabledSelect" class="form-label">Pessoa</label>
+                            <select id="disabledSelect" class="form-select">
+                                <option>Selecione uma pessoa</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Pesquisar</button>
+                        <button type="reset" class="btn btn-secondary">Limpar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <p><i class="fa-solid fa-magnifying-glass-plus"></i> Pesquisar Locação Ativa</p>
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <div class="mb-3">
+                        <label for="InputCPF" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="InputCPF" aria-describedby="CPF" placeholder="Digite o CPF do Cliente">
+                    </div>           
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/carros.js"></script>
+    <script src="js/pessoas.js"></script>
+    <script src="js/locacao.js"></script>
+</div>
