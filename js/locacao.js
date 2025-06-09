@@ -7,6 +7,7 @@ function mostrarCarros() { //feito para mostrar os carros no pesquisar
         let carro_form = document.getElementById("carroidLocacoes");
         for(let carro of carros){
             const option = document.createElement("option");
+            option.value = carro.id; // Corrigido para usar value
             for(let modelo of modelos){
                 if(modelo.id == carro.modelo){
                     option.innerText = `${carro.placa} - ${modelo.nome} (${carro.ano}) | R$ ${carro.diaria}`
@@ -27,6 +28,7 @@ function mostrarPessoas() { //feito para mostrar os pessoas no pesquisar
         let pessoa_form = document.getElementById("pessoaidLocacoes");
         for(let pessoa of pessoas){
             const option = document.createElement("option");
+            option.value = pessoa.id; // Corrigido para usar value
             option.innerText = `[${pessoa.CPF}] ${pessoa.nome}`
             pessoa_form.appendChild(option)
         } 
@@ -68,8 +70,8 @@ function enviarDados(){
 
     let form = document.getElementById("cadastro");
 
-    let pessoa_form = document.getElementById("pessoaidLocacoes").value;
-    let carro_form = document.getElementById("carroidLocacoes").value;
+    let pessoa_form = document.getElementById("pessoaidLocacoes").value; // Corrigido para usar value
+    let carro_form = document.getElementById("carroidLocacoes").value;   // Corrigido para usar value
     let data_inicio_form = document.getElementById("dataInicial").value;
     let data_fim_form = document.getElementById("dataFinal").value;
 
@@ -112,15 +114,16 @@ function enviarDados(){
 
     let locacao = {
         id: novoIDLocacoes, 
-        pessoaId: pessoa_form,
-        carroId: carro_form, 
+        pessoaId: parseInt(pessoa_form),
+        carroId: parseInt(carro_form),
         dataInicio: data_inicio_form, 
-        dataFim: data_fim_form
+        dataFim: data_fim_form,
+        diarias: calcularDiarias(data_inicio_form, data_fim_form),
+        valorTotal: calcularValorTotal(data_inicio_form, data_fim_form, parseInt(carro_form))
     };
-    console.log(locacao);
+
 
     locacoes.push(locacao);
-
     localStorage.setItem("locacoes", JSON.stringify(locacoes));
 
     renderizarTabelaLocacao(locacoes);
@@ -133,6 +136,34 @@ event.preventDefault();
 enviarDados(); 
 });
 
+function calcularDiarias(dataInicio, dataFim) {
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+    const diffTime = Math.abs(fim - inicio);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // converte milissegundos para dias
+    return diffDays;
+}
+
+calcularValorTotal = (dataInicio, dataFim, carroId) => {
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+    const diffTime = Math.abs(fim - inicio);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // converte milissegundos para dias
+
+    let carros = localStorage.getItem("carros");
+    carros = JSON.parse(carros);
+
+    let diariaCarro = 0;
+
+    for(let carro of carros){
+        if(carro.id == carroId){
+            diariaCarro = carro.diaria;
+            break;
+        }
+    }
+
+    return diffDays * diariaCarro;
+}
 
 function renderizarTabelaLocacao(locacoes){
     if(locacoes.length == 0) {
@@ -215,19 +246,23 @@ function carregarDadosTabelaLocacao(locacoes){
         let tbody = document.getElementById("tabela-corpo-locacao");
         tbody.innerHTML = ``;
         for(let locacao of locacoes){
-            let carro = buscaCarroId(locacao.carroId)
-            let modelo = buscaModeloId(carro.modelo)
-            let pessoa = buscaPessoaId(locacao.pessoaId)
-            
+            let carro = buscaCarroId(locacao.carroId);
+            let modelo = carro ? buscaModeloId(carro.modelo) : null;
+            let pessoa = buscaPessoaId(locacao.pessoaId);
+
+            if (!carro || !modelo || !pessoa) {
+                continue;
+            }
+
             tbody.innerHTML +=  `
                 <tr>
                     <td>${pessoa.nome}</td>
                     <td>${carro.placa} - ${modelo.nome}</td>
                     <td>${locacao.dataInicio}</td>
                     <td>${locacao.dataFim}</td>
-                    <td>${locacao.diarias}</td>
-                    <td>${locacao.valorTotal}</td>
-                    <td><button class="btn btn-danger" onClick="removerLocacao(${locacao.idLocacoes})">Finalizarr</button></td>
+                    <td>${locacao.diarias || ""}</td>
+                    <td>${locacao.valorTotal || ""}</td>
+                    <td><button class="btn btn-danger" onClick="removerLocacao(${locacao.id})">Finalizar</button></td>
                 </tr>
             `;
         }
