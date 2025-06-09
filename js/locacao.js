@@ -70,8 +70,8 @@ function enviarDados(){
 
     let pessoa_form = document.getElementById("pessoaidLocacoes").value;
     let carro_form = document.getElementById("carroidLocacoes").value;
-    let data_inicio_form = document.getElementById("dataInicio").value;
-    let data_fim_form = document.getElementById("dataFim").value;
+    let data_inicio_form = document.getElementById("dataInicial").value;
+    let data_fim_form = document.getElementById("dataFinal").value;
 
     if(pessoa_form == "" || carro_form == "" || data_inicio_form == "" || data_fim_form == ""){
         window.alert("Preencha todos os campos!");
@@ -80,19 +80,19 @@ function enviarDados(){
 
     let locacoes = getLocacoes(); //
     
-    let dataFimExiste = false;
+    // let dataFimExiste = false;
 
-    for(let locacao of locacoes){
-        if(locacao.dataFim == data_fim_form){
-            dataFimExiste = true;
-            break; // interromper o loop
-        }
-    }
+    // for(let locacao of locacoes){
+    //     if(locacao.dataFim == data_fim_form){
+    //         dataFimExiste = true;
+    //         break; // interromper o loop
+    //     }
+    // }
 
-    if(dataFimExiste){
-        window.alert("E-mail já existe no sistema!");
-        return;
-    }
+    // if(dataFimExiste){
+    //     window.alert("E-mail já existe no sistema!");
+    //     return;
+    // }
 
 
 
@@ -107,16 +107,17 @@ function enviarDados(){
     if(locacoes.length == 0){
         novoIDLocacoes = 1;
     }else{
-        novoIDLocacoes = locacoes[locacoes.length - 1].idLocacoes + 1; // locacoes[]
+        novoIDLocacoes = locacoes[locacoes.length - 1].id + 1; // locacoes[]
     }
 
     let locacao = {
-        idLocacoes: novoIDLocacoes, 
-        pessoaidLocacoes: pessoa_form,
-        carroidLocacoes: carro_form, 
+        id: novoIDLocacoes, 
+        pessoaId: pessoa_form,
+        carroId: carro_form, 
         dataInicio: data_inicio_form, 
         dataFim: data_fim_form
     };
+    console.log(locacao);
 
     locacoes.push(locacao);
 
@@ -127,6 +128,11 @@ function enviarDados(){
 
     form.reset();
 }
+document.getElementById("cadastro").addEventListener("submit", function(event) {
+event.preventDefault(); 
+enviarDados(); 
+});
+
 
 function renderizarTabelaLocacao(locacoes){
     if(locacoes.length == 0) {
