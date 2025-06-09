@@ -1,3 +1,68 @@
+function relatorio() { 
+    console.log("Relatorio iniciado")
+    let locacoes = localStorage.getItem("locacoes");
+    locacoes = JSON.parse(locacoes);
+    //let data_inicio_form = document.getElementById("dataInicio").value;
+    //let data_fim_form = document.getElementById("dataFim").value;
+    
+    carregarDadosTabelaLocacao(locacoes)
+}
+
+function carregarDadosTabelaLocacao(locacoes){
+    if(locacoes.length > 0){
+        let tbody = document.getElementById("tabela-corpo-locacao");
+        console.log(tbody);
+        tbody.innerHTML = ``;
+        for(let locacao of locacoes){
+            let carro = buscaCarroId(locacao.carroId)
+            let modelo = buscaModeloId(carro.modelo)
+            let pessoa = buscaPessoaId(locacao.pessoaId)
+            
+            tbody.innerHTML +=  `
+                <tr>
+                    <td>${pessoa.nome}</td>
+                    <td>${carro.placa} - ${modelo.nome}</td>
+                    <td>${locacao.dataInicio}</td>
+                    <td>${locacao.dataFim}</td>
+                    <td>${locacao.diarias}</td>
+                    <td>${locacao.valorTotal}</td>
+                    <td><button class="btn btn-danger" onClick="removerLocacao(${locacao.idLocacoes})">Finalizarr</button></td>
+                </tr>
+            `;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
 function relatorio() {
     console.log("Relatório iniciado");
 
@@ -8,8 +73,8 @@ function relatorio() {
         let cliente = JSON.parse(localStorage.getItem('carros')) || [];
         let carro = JSON.parse(localStorage.getItem('modelo')) || [];
         let placa = JSON.parse(localStorage.getItem('locacoes')) || [];
-       /*  let dias = JSON.parse(localStorage.getItem('dias')) || [];
-        let valor = JSON.parse(localStorage.getItem('valor')) || []; */
+       let dias = JSON.parse(localStorage.getItem('dias')) || [];
+        let valor = JSON.parse(localStorage.getItem('valor')) || []; 
     
         carregaRelatorio();
     }
@@ -76,8 +141,7 @@ function relatorio() {
             <td>${pessoas.id} ${pessoas.nome} ${pessoas.marcaId}</td>
             <td>R$ ${pessoas.preco.toFixed(2)}</td>
             `
-             */
-            
+           
         tbody.appendChild(tr);
     }
 }
