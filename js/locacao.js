@@ -253,7 +253,9 @@ function carregarDadosTabelaLocacao(locacoes){
             if (!carro || !modelo || !pessoa) {
                 continue;
             }
-
+            if(!locacao.diaria){
+                locacao.diarias = calcularDiarias(locacao.dataInicio, locacao.dataFim);
+            }
             tbody.innerHTML +=  `
                 <tr>
                     <td>${pessoa.nome}</td>
