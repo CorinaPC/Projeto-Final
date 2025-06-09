@@ -1,4 +1,4 @@
-function mostrarCarros() {
+function mostrarCarros() { //feito para mostrar os carros no pesquisar
     let carros = localStorage.getItem("carros");
     let modelos = localStorage.getItem("modelos");
     if(carros){
@@ -9,18 +9,17 @@ function mostrarCarros() {
             const option = document.createElement("option");
             for(let modelo of modelos){
                 if(modelo.id == carro.modelo){
-                    option.innerText = `${carro.placa} - ${modelo.nome} (${carro.ano}) / R$ ${carro.diaria}`
+                    option.innerText = `${carro.placa} - ${modelo.nome} (${carro.ano}) | R$ ${carro.diaria}`
                 }
             }
             carro_form.appendChild(option)
         } 
     }
-    
 }
 
 mostrarCarros()
 
-function mostrarPessoas() {
+function mostrarPessoas() { //feito para mostrar os pessoas no pesquisar
     let pessoas = localStorage.getItem("pessoas");
     if(pessoas){
         pessoas = JSON.parse(pessoas);
@@ -32,12 +31,22 @@ function mostrarPessoas() {
             pessoa_form.appendChild(option)
         } 
     }
-    
 }
 
 mostrarPessoas()
 
-function locacao() {
+function quantidadeDiarias() { //feito para mostrar os pessoas no pesquisar
+    let locacoes = getLocacoes()
+
+    for(let locacao of locacoes){
+
+        console.log(locacao.dataFim)
+    }
+}
+
+quantidadeDiarias()
+
+function locacao() { //Acho que é a função que inicia toda a locação
     console.log("Locação iniciado");
 
 
@@ -219,7 +228,7 @@ function carregarDadosTabelaLocacao(locacoes){
     }
 }
 
-function getLocacoes(){
+function getLocacoes(){ //confere se ja existe locaçoes
     let locacoes = localStorage.getItem("locacoes");
 
     if(locacoes){
@@ -227,6 +236,5 @@ function getLocacoes(){
     }else{
         locacoes = [];
     }
-    console.log(locacoes)
     return locacoes;
 }
