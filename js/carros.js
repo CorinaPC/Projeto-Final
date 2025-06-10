@@ -59,7 +59,7 @@ function novoCarro(){
     let novoCarro = document.getElementById("novo-carro");
     novoCarro = document.createElement(section);
     div.id("carros-cont").appendChild (section);
-    innerHTML=`
+    section.innerHTML=`
                 <!-- Botão para abrir o modal -->
         <button class="btn btn-primary" onclick="abrirCadastroVeiculo()">Novo Veículo</button>
 
