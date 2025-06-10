@@ -9,14 +9,14 @@
             <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                     <strong>Locação de Veículos</strong> 
-                    <form>
+                    <form id="cadastro">
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label for="dataInicial" class="form-label">Data de Início</label>
+                                <label id='dataInicio'for="dataInicial" class="form-label">Data de Início</label>
                                 <input type="date" class="form-control d-inline-flex p-2" id="dataInicial" name="dataInicial" required>
                             </div>
                             <div class="col-6 mb-3">
-                                <label for="dataFinal" class="form-label">Data de Fim</label>
+                                <label id='dataFim' for="dataFinal" class="form-label">Data de Fim</label>
                                 <input type="date" class="form-control d-inline-flex p-2" id="dataFinal" name="dataFinal" required>
                             </div>
                         </div>
@@ -35,6 +35,7 @@
                         <button type="submit" id="btnEnviar" class="btn btn-primary">Pesquisar</button>
                         <button type="reset" class="btn btn-secondary">Limpar</button>
                     </form>
+                    <div id="locacoes"></div>
                 </div>
             </div>
         </div>

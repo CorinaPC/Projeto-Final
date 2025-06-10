@@ -1,4 +1,4 @@
-function mostrarCarros() {
+function mostrarCarros() { //feito para mostrar os carros no pesquisar
     let carros = localStorage.getItem("carros");
     let modelos = localStorage.getItem("modelos");
     if(carros){
@@ -7,20 +7,20 @@ function mostrarCarros() {
         let carro_form = document.getElementById("carroidLocacoes");
         for(let carro of carros){
             const option = document.createElement("option");
+            option.value = carro.id; // Corrigido para usar value
             for(let modelo of modelos){
                 if(modelo.id == carro.modelo){
-                    option.innerText = `${carro.placa} - ${modelo.nome} (${carro.ano}) / R$ ${carro.diaria}`
+                    option.innerText = `${carro.placa} - ${modelo.nome} (${carro.ano}) | R$ ${carro.diaria}`
                 }
             }
             carro_form.appendChild(option)
         } 
     }
-    
 }
 
 mostrarCarros()
 
-function mostrarPessoas() {
+function mostrarPessoas() { //feito para mostrar os pessoas no pesquisar
     let pessoas = localStorage.getItem("pessoas");
     if(pessoas){
         pessoas = JSON.parse(pessoas);
@@ -28,16 +28,27 @@ function mostrarPessoas() {
         let pessoa_form = document.getElementById("pessoaidLocacoes");
         for(let pessoa of pessoas){
             const option = document.createElement("option");
+            option.value = pessoa.id; // Corrigido para usar value
             option.innerText = `[${pessoa.CPF}] ${pessoa.nome}`
             pessoa_form.appendChild(option)
         } 
     }
-    
 }
 
 mostrarPessoas()
 
-function locacao() {
+function quantidadeDiarias() { //feito para mostrar os pessoas no pesquisar
+    let locacoes = getLocacoes()
+
+    for(let locacao of locacoes){
+
+        console.log(locacao.dataFim)
+    }
+}
+
+quantidadeDiarias()
+
+function locacao() { //Acho que é a função que inicia toda a locação
     console.log("Locação iniciado");
 
 
@@ -59,10 +70,10 @@ function enviarDados(){
 
     let form = document.getElementById("cadastro");
 
-    let pessoa_form = document.getElementById("pessoaidLocacoes").value;
-    let carro_form = document.getElementById("carroidLocacoes").value;
-    let data_inicio_form = document.getElementById("dataInicio").value;
-    let data_fim_form = document.getElementById("dataFim").value;
+    let pessoa_form = document.getElementById("pessoaidLocacoes").value; // Corrigido para usar value
+    let carro_form = document.getElementById("carroidLocacoes").value;   // Corrigido para usar value
+    let data_inicio_form = document.getElementById("dataInicial").value;
+    let data_fim_form = document.getElementById("dataFinal").value;
 
     if(pessoa_form == "" || carro_form == "" || data_inicio_form == "" || data_fim_form == ""){
         window.alert("Preencha todos os campos!");
@@ -71,19 +82,19 @@ function enviarDados(){
 
     let locacoes = getLocacoes(); //
     
-    let dataFimExiste = false;
+    // let dataFimExiste = false;
 
-    for(let locacao of locacoes){
-        if(locacao.dataFim == data_fim_form){
-            dataFimExiste = true;
-            break; // interromper o loop
-        }
-    }
+    // for(let locacao of locacoes){
+    //     if(locacao.dataFim == data_fim_form){
+    //         dataFimExiste = true;
+    //         break; // interromper o loop
+    //     }
+    // }
 
-    if(dataFimExiste){
-        window.alert("E-mail já existe no sistema!");
-        return;
-    }
+    // if(dataFimExiste){
+    //     window.alert("E-mail já existe no sistema!");
+    //     return;
+    // }
 
 
 
@@ -98,25 +109,60 @@ function enviarDados(){
     if(locacoes.length == 0){
         novoIDLocacoes = 1;
     }else{
-        novoIDLocacoes = locacoes[locacoes.length - 1].idLocacoes + 1; // locacoes[]
+        novoIDLocacoes = locacoes[locacoes.length - 1].id + 1; // locacoes[]
     }
 
     let locacao = {
-        idLocacoes: novoIDLocacoes, 
-        pessoaidLocacoes: pessoa_form,
-        carroidLocacoes: carro_form, 
+        id: novoIDLocacoes, 
+        pessoaId: parseInt(pessoa_form),
+        carroId: parseInt(carro_form),
         dataInicio: data_inicio_form, 
-        dataFim: data_fim_form
+        dataFim: data_fim_form,
+        diarias: calcularDiarias(data_inicio_form, data_fim_form),
+        valorTotal: calcularValorTotal(data_inicio_form, data_fim_form, parseInt(carro_form))
     };
 
-    locacoes.push(locacao);
 
+    locacoes.push(locacao);
     localStorage.setItem("locacoes", JSON.stringify(locacoes));
 
     renderizarTabelaLocacao(locacoes);
     carregarDadosTabelaLocacao(locacoes);
 
     form.reset();
+}
+document.getElementById("cadastro").addEventListener("submit", function(event) {
+event.preventDefault(); 
+enviarDados(); 
+});
+
+function calcularDiarias(dataInicio, dataFim) {
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+    const diffTime = Math.abs(fim - inicio);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // converte milissegundos para dias
+    return diffDays;
+}
+
+calcularValorTotal = (dataInicio, dataFim, carroId) => {
+    const inicio = new Date(dataInicio);
+    const fim = new Date(dataFim);
+    const diffTime = Math.abs(fim - inicio);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // converte milissegundos para dias
+
+    let carros = localStorage.getItem("carros");
+    carros = JSON.parse(carros);
+
+    let diariaCarro = 0;
+
+    for(let carro of carros){
+        if(carro.id == carroId){
+            diariaCarro = carro.diaria;
+            break;
+        }
+    }
+
+    return diffDays * diariaCarro;
 }
 
 function renderizarTabelaLocacao(locacoes){
@@ -200,26 +246,32 @@ function carregarDadosTabelaLocacao(locacoes){
         let tbody = document.getElementById("tabela-corpo-locacao");
         tbody.innerHTML = ``;
         for(let locacao of locacoes){
-            let carro = buscaCarroId(locacao.carroId)
-            let modelo = buscaModeloId(carro.modelo)
-            let pessoa = buscaPessoaId(locacao.pessoaId)
-            
+            let carro = buscaCarroId(locacao.carroId);
+            let modelo = carro ? buscaModeloId(carro.modelo) : null;
+            let pessoa = buscaPessoaId(locacao.pessoaId);
+
+            if (!carro || !modelo || !pessoa) {
+                continue;
+            }
+            if(!locacao.diaria){
+                locacao.diarias = calcularDiarias(locacao.dataInicio, locacao.dataFim);
+            }
             tbody.innerHTML +=  `
                 <tr>
                     <td>${pessoa.nome}</td>
                     <td>${carro.placa} - ${modelo.nome}</td>
                     <td>${locacao.dataInicio}</td>
                     <td>${locacao.dataFim}</td>
-                    <td>${locacao.diarias}</td>
-                    <td>${locacao.valorTotal}</td>
-                    <td><button class="btn btn-danger" onClick="removerLocacao(${locacao.idLocacoes})">Finalizarr</button></td>
+                    <td>${locacao.diarias || ""}</td>
+                    <td>${locacao.valorTotal || ""}</td>
+                    <td><button class="btn btn-danger" onClick="removerLocacao(${locacao.id})">Finalizar</button></td>
                 </tr>
             `;
         }
     }
 }
 
-function getLocacoes(){
+function getLocacoes(){ //confere se ja existe locaçoes
     let locacoes = localStorage.getItem("locacoes");
 
     if(locacoes){
@@ -227,7 +279,6 @@ function getLocacoes(){
     }else{
         locacoes = [];
     }
-    console.log(locacoes)
     return locacoes;
 }
 
