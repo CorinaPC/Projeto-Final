@@ -1,6 +1,33 @@
 <div id="relatorio">
     <div class="container mt-3">
-        <p>Relatório</p>
     </div>
+</div>
+<div class="row">
+    <div class="col-6 mb-3">
+        <label for="dataInicial" class="form-label">Data de Inicio</label>
+        <input type="date" class="form-control d-inline-flex p-2" id="dataInicial" name="dataInicial" required>
+    </div>
+    <div class="col-6 mb-3">
+        <label for="dataFinal" class="form-label">Data de Fim</label>
+        <input type="date" class="form-control d-inline-flex p-2" id="dataFinal" name="dataFinal" required>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Gerar Relatorio </button>
+    </div>
+    <table id="tabela-relatorio">
+        <thead>
+        <tr>
+            <td>Data</td>
+            <td>Clientes</td>
+            <td>Carros</td>
+            <td>Placa</td>
+            <td>Dias</td>
+            <td>Valor Total</td>
+        </tr>
+        </thead>
+        <tbody id="tabela-corpo-locacao">
+                
+        </tbody>
+    </table>
 </div>
 <script src="js/relatorio.js"></script>
