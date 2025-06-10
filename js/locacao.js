@@ -281,3 +281,28 @@ function getLocacoes(){ //confere se ja existe locaçoes
     }
     return locacoes;
 }
+
+function buscarPessoaPorCPF() {
+    console.log("Buscar pessoa pelo CPF iniciado");
+    const cpfBusca = document.getElementById('inputCPF').value.trim();
+    if (!cpfBusca) {
+        alert("Digite um CPF para buscar.");
+        return;
+    }
+    const pessoas = JSON.parse(localStorage.getItem('pessoas')) || [];
+    // Busca a pessoa com o CPF exato informado
+    const pessoa = pessoas.find(p => (p.CPF || p.cpf) === cpfBusca);
+    if (pessoa) {
+        // Aqui você pode retornar a pessoa encontrada, exibir na tela ou preencher campos do formulário
+        // Exemplo: preencher o campo de nome automaticamente
+        document.getElementById('nomePessoa').value = pessoa.nome;
+        // Ou apenas retornar o objeto pessoa
+        return pessoa;
+    } else {
+        alert("Pessoa não cadastrada.");
+        return null;
+    }
+}
+
+// Exemplo de uso: ao clicar no botão, busca e retorna a pessoa pelo CPF
+document.getElementById("inputCPF").addEventListener("click", buscarPessoaPorCPF);
