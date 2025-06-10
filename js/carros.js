@@ -32,7 +32,7 @@ function modelos(){
         tbody.appendChild(tr);
         tr.innerHTML=`
                 <td>${pegarNomeModelo(modelo.id)}</td>
-                <td>${pegarNomeMarca(modelo.id)}</td>
+                <td>${pegarNomeMarca(modelo.marcaId)}</td>
                 <td><button type="button" class="btn btn-primary"><i class="fa-solid fa-square-pen"></i></button>  <button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></td>
         `;
     }
