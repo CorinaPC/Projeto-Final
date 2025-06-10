@@ -1,6 +1,103 @@
 <div id="carros">
-    <div class="container mt-3">
-        <p>Carros</p>
+    <div id="pagina-in" class="container mt-3">
+        <div class="row">
+           <!-- Barra lateral -->
+            <aside class="col-md-2 bg-light p-3 border">
+                <ul class="nav flex-column" id="menu-carros">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#carros-cont">Carros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#modelos-cont">Modelos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#marcas-cont">Marcas</a>
+                    </li>
+                </ul>
+            </aside>
+           <!-- Conteúdo principal -->
+            <main class="col-md-8">
+                <div id="carros-cont">
+                    <div class="adic-prop d-flex justify-content-between align-items-center mb-1"> 
+                        <h2 class="mb-0">Carros</h2>
+                        <button type="button" class="btn btn-primary" id="novo-carro">+ carro</button>
+                    </div>
+                    
+                    <div class="container text-center">
+                         <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Placa</th>
+                                    <th scope="col">Modelo</th>
+                                    <th scope="col">Ano</th>
+                                    <th scope="col">Diária</th>
+                                    <th scope="col">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="carros-info">
+                                <!-- <tr>
+                                    <td>MDG-7894</td>
+                                    <td>Prisma</td>
+                                    <td>2012</td>
+                                    <td>150,00</td>
+                                    <td><button type="button" class="btn btn-primary"><i class="fa-solid fa-square-pen"></i></button>  <button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div id="marcas-cont">
+                    <div class="adic-prop d-flex justify-content-between align-items-center mb-1"> 
+                        <h2 class="mb-0">Marcas</h2>
+                        <button type="button" class="btn btn-primary">+ Marca</button>
+                    </div>
+                    
+                    <div class="container text-center">
+                         <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Marca</th>
+                                    <th scope="col">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marcas-info">
+                                <!-- <tr>
+                                    <td>Marca</td>
+                                    <td><button type="button" class="btn btn-primary"><i class="fa-solid fa-square-pen"></i></button>  <button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="modelos-cont">
+                    <div class="adic-prop d-flex justify-content-between align-items-center mb-1"> 
+                        <h2 class="mb-0">Modelos</h2>
+                        <button type="button" class="btn btn-primary">+ Modelo</button>
+                    </div>
+                    
+                    <div class="container text-center">
+                         <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Marca</th>
+                                    <th scope="col">Modelo</th>
+                                    <th scope="col">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modelos-info">
+                                <!-- <tr>
+                                    <td>Marca</td>
+                                    <td>Modelo</td>
+                                    <td><button type="button" class="btn btn-primary"><i class="fa-solid fa-square-pen"></i></button>  <button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>     
 </div>
 <script src="js/carros.js"></script>
