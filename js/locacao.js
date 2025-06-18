@@ -37,17 +37,6 @@ function mostrarPessoas() { //feito para mostrar os pessoas no pesquisar
 
 mostrarPessoas()
 
-function quantidadeDiarias() { //feito para mostrar os pessoas no pesquisar
-    let locacoes = getLocacoes()
-
-    for(let locacao of locacoes){
-
-        console.log(locacao.dataFim)
-    }
-}
-
-quantidadeDiarias()
-
 function locacao() { //Acho que é a função que inicia toda a locação
     console.log("Locação iniciado");
 
@@ -80,37 +69,11 @@ function enviarDados(){
         return;
     }
 
-    let locacoes = getLocacoes(); //
-    
-    // let dataFimExiste = false;
-
-    // for(let locacao of locacoes){
-    //     if(locacao.dataFim == data_fim_form){
-    //         dataFimExiste = true;
-    //         break; // interromper o loop
-    //     }
-    // }
-
-    // if(dataFimExiste){
-    //     window.alert("E-mail já existe no sistema!");
-    //     return;
-    // }
-
-
-
-    // locacoes vazio --> idLocacoes = 1
-
-    // locacoes não está vazio 
+    let locacoes = getLocacoes(); 
 
     let novoIDLocacoes;
 
-    // novoIDLocacoes = locacoes.length == 0 ? 1 : locacoes[locacoes.length - 1].idLocacoes + 1;
-
-    if(locacoes.length == 0){
-        novoIDLocacoes = 1;
-    }else{
-        novoIDLocacoes = locacoes[locacoes.length - 1].id + 1; // locacoes[]
-    }
+    novoIDLocacoes = locacoes.length == 0 ? 1 : locacoes[locacoes.length - 1].idLocacoes + 1;
 
     let locacao = {
         id: novoIDLocacoes, 
@@ -118,7 +81,7 @@ function enviarDados(){
         carroId: parseInt(carro_form),
         dataInicio: data_inicio_form, 
         dataFim: data_fim_form,
-        diarias: calcularDiarias(data_inicio_form, data_fim_form),
+        finalizado: false, // Inicialmente não finalizado
         valorTotal: calcularValorTotal(data_inicio_form, data_fim_form, parseInt(carro_form))
     };
 
@@ -192,20 +155,17 @@ function renderizarTabelaLocacao(locacoes){
     return true;
 }
 
-function removerLocacao(idLocacoes){ // terioa que ser finalizado ou locar e estaria em Ações
-    let novalocacao = [];
+function removerLocacao(idLocacao) {
     let locacoes = getLocacoes();
-
-    for(let locacao of locacoes){
-        if(locacao.idLocacoes !== idLocacoes){
-            novalocacao.push(locacao)
+    for (let locacao of locacoes) {
+        if (locacao.id === idLocacao) {
+            locacao.finalizado = true; // Atualiza o status de finalizado
+            break;
         }
     }
-
-    localStorage.setItem("locacoes", JSON.stringify(novalocacao));
-
-    renderizarTabelaLocacao(novalocacao);
-    carregarDadosTabelaLocacao(novalocacao);
+    localStorage.setItem("locacoes", JSON.stringify(locacoes));
+    renderizarTabelaLocacao(locacoes);
+    carregarDadosTabelaLocacao(locacoes);
 }
 
 function buscaPessoaId(pessoaId){
@@ -249,6 +209,12 @@ function carregarDadosTabelaLocacao(locacoes){
             let carro = buscaCarroId(locacao.carroId);
             let modelo = carro ? buscaModeloId(carro.modelo) : null;
             let pessoa = buscaPessoaId(locacao.pessoaId);
+            let finalizado = locacao.finalizado;
+            if (finalizado == false) { // Verifica se a locação não está finalizada
+                finalizado = "Finalizar";
+            } else {
+                finalizado = "Finalizado";
+            }
 
             if (!carro || !modelo || !pessoa) {
                 continue;
@@ -264,7 +230,7 @@ function carregarDadosTabelaLocacao(locacoes){
                     <td>${locacao.dataFim}</td>
                     <td>${locacao.diarias || ""}</td>
                     <td>${locacao.valorTotal || ""}</td>
-                    <td><button class="btn btn-danger" onClick="removerLocacao(${locacao.id})">Finalizar</button></td>
+                    <td><button class="btn btn-danger" onClick="removerLocacao(${locacao.id})">${finalizado}</button></td>
                 </tr>
             `;
         }
