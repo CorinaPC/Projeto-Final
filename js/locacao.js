@@ -1,11 +1,15 @@
 function mostrarCarros() { //feito para mostrar os carros no pesquisar
-    let carros = localStorage.getItem("carros");
-    let modelos = localStorage.getItem("modelos");
+    let locacoes = JSON.parse(localStorage.getItem("locacoes")) || [];
+    let carros = JSON.parse(localStorage.getItem("carros")) || [];
+    let modelos = JSON.parse(localStorage.getItem("modelos")) || [];
     if(carros){
-        carros = JSON.parse(carros);
-        modelos = JSON.parse(modelos);
         let carro_form = document.getElementById("carroidLocacoes");
         for(let carro of carros){
+            // Verifica se o carro está excluído
+            if (carro.excluido === true) continue;
+            // Verifica se o carro está locado (locação ativa)
+            let estaLocado = locacoes.some(locacao => locacao.carroId == carro.id && locacao.finalizado === false);
+            if (estaLocado) continue;
             const option = document.createElement("option");
             option.value = carro.id; // Corrigido para usar value
             for(let modelo of modelos){
@@ -14,23 +18,23 @@ function mostrarCarros() { //feito para mostrar os carros no pesquisar
                 }
             }
             carro_form.appendChild(option)
-        } 
+        }
     }
 }
 
 mostrarCarros()
 
 function mostrarPessoas() { //feito para mostrar os pessoas no pesquisar
-    let pessoas = localStorage.getItem("pessoas");
-    if(pessoas){
-        pessoas = JSON.parse(pessoas);
-        
+    let pessoas = JSON.parse(localStorage.getItem("pessoas")) || [];
+    if(pessoas){   
         let pessoa_form = document.getElementById("pessoaidLocacoes");
         for(let pessoa of pessoas){
-            const option = document.createElement("option");
-            option.value = pessoa.id; // Corrigido para usar value
-            option.innerText = `[${pessoa.CPF}] ${pessoa.nome}`
-            pessoa_form.appendChild(option)
+            if(pessoa.ativo == true){ // Verifica se a pessoa está ativa
+                const option = document.createElement("option");
+                option.value = pessoa.id; // Corrigido para usar value
+                option.innerText = `[${pessoa.CPF}] ${pessoa.nome}`
+                pessoa_form.appendChild(option)
+            }
         } 
     }
 }
@@ -40,15 +44,12 @@ mostrarPessoas()
 function locacao() { //Acho que é a função que inicia toda a locação
     console.log("Locação iniciado");
 
-
     //locacoes = [{idLocacoes, pessoaIdLocacoes, carroIdLocacoes, dataInicio, dataFim, valorTotal, finalizado}, {idLocacoes, pessoaIdLocacoes, carroIdLocacoes, dataInicio, dataFim, valorTotal, finalizado}, {idLocacoes, pessoaIdLocacoes, carroIdLocacoes, dataInicio, dataFim, valorTotal, finalizado}]
-
     let locacoes = getLocacoes();
 
-    if(renderizarTabelaLocacao(locacoes)){
-        carregarDadosTabelaLocacao(locacoes);
+    if(renderizarTabelaLocacao(locacoes, "novaLocacao")){
+        carregarDadosTabelaLocacao(locacoes, "novaLocacao");
     }
-    
 
     document.getElementById("btnEnviar").addEventListener("click", enviarDados);
 }
@@ -89,8 +90,8 @@ function enviarDados(){
     locacoes.push(locacao);
     localStorage.setItem("locacoes", JSON.stringify(locacoes));
 
-    renderizarTabelaLocacao(locacoes);
-    carregarDadosTabelaLocacao(locacoes);
+    renderizarTabelaLocacao(locacoes, "novaLocacao");
+    carregarDadosTabelaLocacao(locacoes, "novaLocacao");
 
     form.reset();
 }
@@ -107,36 +108,23 @@ function calcularDiarias(dataInicio, dataFim) {
     return diffDays;
 }
 
-calcularValorTotal = (dataInicio, dataFim, carroId) => {
-    const inicio = new Date(dataInicio);
-    const fim = new Date(dataFim);
-    const diffTime = Math.abs(fim - inicio);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // converte milissegundos para dias
-
-    let carros = localStorage.getItem("carros");
-    carros = JSON.parse(carros);
-
-    let diariaCarro = 0;
-
-    for(let carro of carros){
-        if(carro.id == carroId){
-            diariaCarro = carro.diaria;
-            break;
-        }
-    }
-
-    return diffDays * diariaCarro;
+function calcularValorTotal(dataInicio, dataFim, carroId) {
+    const carros = JSON.parse(localStorage.getItem("carros")) || []; // Recupera a lista de carros do localStorage e converte de texto para array de objetos
+    const carro = carros.find(c => c.id === carroId); // Procura o carro com o id correspondente ao carroId informado
+    if (!carro) return 0; // Se não encontrar o carro, retorna 0 (evita erro)
+    const diarias = calcularDiarias(dataInicio, dataFim); // Calcula o número de diárias usando a função calcularDiarias
+    return diarias * carro.diaria; // Retorna o valor total multiplicando o número de diárias pelo valor da diária do carro
 }
 
-function renderizarTabelaLocacao(locacoes){
+function renderizarTabelaLocacao(locacoes, idHTML){
     if(locacoes.length == 0) {
-        document.getElementById("locacoes").innerHTML = `
+        document.getElementById(idHTML).innerHTML = `
             <div class="m-3 alert alert-primary" role="alert">
                 Não há locacoes cadastradas!
             </div>
         `;
     }else{
-        document.getElementById("locacoes").innerHTML = `
+        document.getElementById(idHTML).innerHTML = `
             <table class="table table-striped">
                 <thead>
                     <th>Pessoa</th>
@@ -147,7 +135,7 @@ function renderizarTabelaLocacao(locacoes){
                     <th>Valor Total</th>
                     <th>Ações</th>
                 </thead>
-                <tbody id="tabela-corpo-locacao">
+                <tbody id="tabela-corpo-${idHTML}">
                 </tbody>
             </table>
         `;
@@ -164,8 +152,8 @@ function removerLocacao(idLocacao) {
         }
     }
     localStorage.setItem("locacoes", JSON.stringify(locacoes));
-    renderizarTabelaLocacao(locacoes);
-    carregarDadosTabelaLocacao(locacoes);
+    renderizarTabelaLocacao(locacoes, "novaLocacao");
+    carregarDadosTabelaLocacao(locacoes, "novaLocacao");
 }
 
 function buscaPessoaId(pessoaId){
@@ -201,9 +189,16 @@ function buscaModeloId(modeloId){
 }
 
 
-function carregarDadosTabelaLocacao(locacoes){
-    if(locacoes.length > 0){
-        let tbody = document.getElementById("tabela-corpo-locacao");
+function carregarDadosTabelaLocacao(locacoes, idHTML){
+    if(idHTML == "novaLocacao"){
+        idHTML = "tabela-corpo-novaLocacao";
+    } else if(idHTML == "pesquisarLocaçãoAtiva"){
+        idHTML = "tabela-corpo-pesquisarLocaçãoAtiva";
+    }
+    console.log("Carregando dados na tabela de locação");
+    console.log(locacoes);
+    if(locacoes.length >= 0){
+        let tbody = document.getElementById(idHTML);
         tbody.innerHTML = ``;
         for(let locacao of locacoes){
             let carro = buscaCarroId(locacao.carroId);
@@ -219,9 +214,7 @@ function carregarDadosTabelaLocacao(locacoes){
             if (!carro || !modelo || !pessoa) {
                 continue;
             }
-            if(!locacao.diaria){
-                locacao.diarias = calcularDiarias(locacao.dataInicio, locacao.dataFim);
-            }
+            locacao.diarias = calcularDiarias(locacao.dataInicio, locacao.dataFim);
             tbody.innerHTML +=  `
                 <tr>
                     <td>${pessoa.nome}</td>
@@ -255,20 +248,29 @@ function buscarPessoaPorCPF() {
         alert("Digite um CPF para buscar.");
         return;
     }
-    const pessoas = JSON.parse(localStorage.getItem('pessoas')) || [];
+    let locacoes = JSON.parse(localStorage.getItem('locacoes')) || [];
+    let pessoas = JSON.parse(localStorage.getItem('pessoas')) || [];
     // Busca a pessoa com o CPF exato informado
-    const pessoa = pessoas.find(p => (p.CPF || p.cpf) === cpfBusca);
-    if (pessoa) {
-        // Aqui você pode retornar a pessoa encontrada, exibir na tela ou preencher campos do formulário
-        // Exemplo: preencher o campo de nome automaticamente
-        document.getElementById('nomePessoa').value = pessoa.nome;
-        // Ou apenas retornar o objeto pessoa
-        return pessoa;
+    let pessoa = pessoas.find(p => (p.CPF || p.cpf) === cpfBusca);
+
+    if (pessoa) { // Verifica se a pessoa existe e está ativa
+        let locacaosPorPessoa = locacoes.filter(locacao => locacao.pessoaId === pessoa.id);
+        if (locacaosPorPessoa.filter(locacao => locacao.finalizado === false) == true){
+            renderizarTabelaLocacao(locacaosPorPessoa, "pesquisarLocaçãoAtiva");
+            carregarDadosTabelaLocacao(locacaosPorPessoa, "pesquisarLocaçãoAtiva");
+        }else{
+            alert("Nenhuma locação ativa encontrada para este CPF.");
+            return;
+        }
     } else {
         alert("Pessoa não cadastrada.");
         return null;
     }
 }
 
-// Exemplo de uso: ao clicar no botão, busca e retorna a pessoa pelo CPF
-document.getElementById("inputCPF").addEventListener("click", buscarPessoaPorCPF);
+document.getElementById("inputCPF").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Evita o envio do formulário, se houver
+        buscarPessoaPorCPF();
+    }
+});
