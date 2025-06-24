@@ -251,11 +251,12 @@ function buscarPessoaPorCPF() {
     let locacoes = JSON.parse(localStorage.getItem('locacoes')) || [];
     let pessoas = JSON.parse(localStorage.getItem('pessoas')) || [];
     // Busca a pessoa com o CPF exato informado
-    let pessoa = pessoas.find(p => (p.CPF || p.cpf) === cpfBusca);
-
+    let pessoa = pessoas.find(p => (p.CPF || p.CPF) === cpfBusca);
+    console.log(locacoes, pessoas, pessoa)
     if (pessoa) { // Verifica se a pessoa existe e está ativa
         let locacaosPorPessoa = locacoes.filter(locacao => locacao.pessoaId === pessoa.id);
-        if (locacaosPorPessoa.filter(locacao => locacao.finalizado === false) == true){
+        console.log(locacaosPorPessoa, "**")
+        if (locacaosPorPessoa.filter(locacao => locacao.finalizado === false).length !== 0){
             renderizarTabelaLocacao(locacaosPorPessoa, "pesquisarLocaçãoAtiva");
             carregarDadosTabelaLocacao(locacaosPorPessoa, "pesquisarLocaçãoAtiva");
         }else{
